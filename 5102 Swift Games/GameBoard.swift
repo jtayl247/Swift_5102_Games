@@ -8,5 +8,9 @@
 import Foundation
 
 class GameBoard {
-    var board : [Int]?
+    var board : [String]
+    
+    init () {
+        board = ["", "", "", "", "", "", "", "", ""]
+    }
 }

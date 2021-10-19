@@ -10,4 +10,8 @@ import Foundation
 class User {
     var identifier : String?
     var token : String?
+    
+    init (token : String) {
+        self.token = token
+    }
 }
