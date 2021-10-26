@@ -25,6 +25,11 @@ class GameBoard: UIViewController {
     var x = "X"
     var o = "O"
     
+    let X_img : UIImage? = UIImage(named: "X_neon.png")
+    let O_img : UIImage? = UIImage(named: "O_neon.png")
+    let X_turn_img : UIImage? = UIImage(named: "p1_Turn.png")
+    let O_Turn_img : UIImage? = UIImage(named: "p2_Turn.png")
+    let blank_img : UIImage? = UIImage(named: "blank.png")
     
     //Initialize Buttons for Grid
     @IBOutlet weak var topLeft_Btn: UIButton!
@@ -39,7 +44,7 @@ class GameBoard: UIViewController {
     @IBOutlet weak var bottomMiddle_Btn: UIButton!
     @IBOutlet weak var bottomRight_Btn: UIButton!
     
-    @IBOutlet weak var move_Label: UILabel!
+    @IBOutlet weak var turn_img: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,10 +69,10 @@ class GameBoard: UIViewController {
     @IBAction func gridTap(_ sender: UIButton) {
         addMoveToGrid(sender)
         
-        if checkGrid(x){
+        if checkGrid("X_neon"){
             resultMessage(title: "X wins!")
         }
-        else if checkGrid(o){
+        else if checkGrid("O_neon"){
             resultMessage(title: "O wins!")
         }
         
@@ -112,7 +117,8 @@ class GameBoard: UIViewController {
     }
     
     func checkSymbol(_ button: UIButton, _ symbol: String) -> Bool{
-        return button.title(for: .normal) == symbol
+        //return button.title(for: .normal) == symbol
+        return button.currentImage == UIImage(named: symbol)
     }
     
     //Add a symbol to the grid depending on whose turn it is (placement occurs automatically)
@@ -121,13 +127,15 @@ class GameBoard: UIViewController {
         if (sender.title(for: .normal) == nil) || (sender.title(for: .normal) == ""){
             //button is empty, check whose turn it is and add symbol based on result
             if (currentMove == playerTurn.X){
-                sender.setTitle(x, for: .normal)
-                move_Label.text = "Player 2's Turn"
+                //sender.setTitle(x, for: .normal)
+                sender.setImage(X_img, for: .normal)
+                turn_img.image = O_Turn_img
                 currentMove = playerTurn.O
             }
             else if (currentMove == playerTurn.O){
-                sender.setTitle(o, for: .normal)
-                move_Label.text = "Player 1's Turn"
+                //sender.setTitle(o, for: .normal)
+                sender.setImage(O_img, for: .normal)
+                turn_img.image = X_turn_img
                 currentMove = playerTurn.X
             }
             sender.isEnabled = false
@@ -139,10 +147,13 @@ class GameBoard: UIViewController {
     //Check if all slots on grid have been played
     func isGridFull() -> Bool{
         for slot in grid{
-            if slot.title(for: .normal) == nil || slot.title(for: .normal) == ""{
-                //Slot has not been played, grid is not full
+            if slot.image(for: .normal) == nil || slot.image(for: .normal) == blank_img{
                 return false
             }
+            //if slot.title(for: .normal) == nil || slot.title(for: .normal) == ""{
+                //Slot has not been played, grid is not full
+            //    return false
+            //}
         }
         return true
     }
@@ -159,18 +170,21 @@ class GameBoard: UIViewController {
     //Reset all slots in grid to blank and reset first move
     func resetGrid(){
         for slot in grid{
-            slot.setTitle("", for: .normal)
+            slot.setImage(blank_img, for: UIControl.State.normal)
+            //slot.setTitle("", for: .normal)
             slot.isEnabled = true
         }
         if (firstMove == playerTurn.X){
             firstMove = playerTurn.X
-            move_Label.text = "Player 1's Turn"
+            turn_img.image = O_Turn_img
+            
         }
         else if (firstMove == playerTurn.O){
             firstMove = playerTurn.O
-            move_Label.text = "Player 2's Turn"
+            turn_img.image = X_turn_img
         }
         currentMove = firstMove
+        turn_img.image = X_turn_img
     }
     
 }

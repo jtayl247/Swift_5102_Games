@@ -112,36 +112,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tic-Tac-Toe" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cv9-8S-bgA">
-                                <rect key="frame" x="134" y="44" width="146" height="36"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="146" id="KfJ-CS-zUm"/>
-                                    <constraint firstAttribute="height" constant="36" id="LNw-vv-beV"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="30"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Player 1 - X" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aE7-E1-t7E">
-                                <rect key="frame" x="20" y="88" width="137.5" height="36"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="137.5" id="TNb-5o-rAz"/>
-                                    <constraint firstAttribute="height" constant="36" id="UCm-XP-456"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="30"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Player 1's Turn!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="trY-q3-k2y">
-                                <rect key="frame" x="115.5" y="704.5" width="183" height="36"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="183" id="Qrf-bJ-18G"/>
-                                    <constraint firstAttribute="height" constant="36" id="tpI-u2-wo4"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="30"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="bXM-QU-ABa">
                                 <rect key="frame" x="20.5" y="266.5" width="373" height="373"/>
                                 <subviews>
@@ -247,31 +217,49 @@
                                     <constraint firstAttribute="width" secondItem="bXM-QU-ABa" secondAttribute="height" multiplier="1:1" id="WCV-HE-4uf"/>
                                 </constraints>
                             </stackView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Player 2 - O" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TZd-GG-d0V">
-                                <rect key="frame" x="248.5" y="88" width="145.5" height="36"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="TTT_Logo" translatesAutoresizingMaskIntoConstraints="NO" id="GeT-N9-zpQ">
+                                <rect key="frame" x="87" y="44" width="240" height="83"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="36" id="2f9-dJ-3BH"/>
-                                    <constraint firstAttribute="width" constant="145.5" id="len-0J-Rlj"/>
+                                    <constraint firstAttribute="width" constant="240" id="RDb-VL-f3O"/>
+                                    <constraint firstAttribute="height" constant="83" id="ahq-vi-dBZ"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="30"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="p1" translatesAutoresizingMaskIntoConstraints="NO" id="bOg-gM-B8Z">
+                                <rect key="frame" x="20" y="135" width="130" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="H3R-0Z-ryv"/>
+                                    <constraint firstAttribute="width" constant="130" id="sa9-em-V5N"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="p2" translatesAutoresizingMaskIntoConstraints="NO" id="4jn-dh-z3X">
+                                <rect key="frame" x="264" y="135" width="130" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="130" id="J9n-6x-yvA"/>
+                                    <constraint firstAttribute="height" constant="45" id="ofO-CI-NLV"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="p1_Turn" translatesAutoresizingMaskIntoConstraints="NO" id="N1N-gI-AIA">
+                                <rect key="frame" x="87" y="662" width="240" height="128"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="240" id="AAJ-8T-1Bd"/>
+                                    <constraint firstAttribute="height" constant="128" id="ZRt-Iu-5Ur"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="MKE-Pn-5AU"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="bXM-QU-ABa" firstAttribute="width" secondItem="7DM-lX-8kD" secondAttribute="width" multiplier="0.9" id="2mT-fA-977"/>
-                            <constraint firstItem="trY-q3-k2y" firstAttribute="centerX" secondItem="7DM-lX-8kD" secondAttribute="centerX" id="7ak-bp-mYY"/>
-                            <constraint firstItem="aE7-E1-t7E" firstAttribute="leading" secondItem="MKE-Pn-5AU" secondAttribute="leading" constant="20" id="KY1-FZ-dOm"/>
+                            <constraint firstItem="MKE-Pn-5AU" firstAttribute="trailing" secondItem="4jn-dh-z3X" secondAttribute="trailing" constant="20" id="38O-Uc-b7B"/>
+                            <constraint firstItem="N1N-gI-AIA" firstAttribute="centerX" secondItem="7DM-lX-8kD" secondAttribute="centerX" id="ITf-Nk-bWd"/>
                             <constraint firstItem="bXM-QU-ABa" firstAttribute="centerY" secondItem="MKE-Pn-5AU" secondAttribute="centerY" id="Lrn-bw-tXF"/>
-                            <constraint firstItem="cv9-8S-bgA" firstAttribute="top" secondItem="MKE-Pn-5AU" secondAttribute="top" id="VWb-qp-RsT"/>
+                            <constraint firstItem="bOg-gM-B8Z" firstAttribute="top" secondItem="GeT-N9-zpQ" secondAttribute="bottom" constant="8" symbolic="YES" id="Pz6-fG-Eo1"/>
+                            <constraint firstItem="bOg-gM-B8Z" firstAttribute="leading" secondItem="MKE-Pn-5AU" secondAttribute="leading" constant="20" id="R4q-tI-lMX"/>
+                            <constraint firstItem="GeT-N9-zpQ" firstAttribute="top" secondItem="MKE-Pn-5AU" secondAttribute="top" id="Wds-yV-05x"/>
                             <constraint firstItem="bXM-QU-ABa" firstAttribute="centerX" secondItem="MKE-Pn-5AU" secondAttribute="centerX" id="fLN-Qh-Plm"/>
-                            <constraint firstItem="TZd-GG-d0V" firstAttribute="top" secondItem="cv9-8S-bgA" secondAttribute="bottom" constant="8" symbolic="YES" id="q7d-AH-Oel"/>
-                            <constraint firstItem="MKE-Pn-5AU" firstAttribute="trailing" secondItem="TZd-GG-d0V" secondAttribute="trailing" constant="20" id="quW-u6-oDe"/>
-                            <constraint firstItem="aE7-E1-t7E" firstAttribute="top" secondItem="cv9-8S-bgA" secondAttribute="bottom" constant="8" symbolic="YES" id="sEh-xk-cDE"/>
-                            <constraint firstItem="trY-q3-k2y" firstAttribute="top" secondItem="bXM-QU-ABa" secondAttribute="bottom" constant="65" id="sda-b8-s9F"/>
-                            <constraint firstItem="cv9-8S-bgA" firstAttribute="centerX" secondItem="7DM-lX-8kD" secondAttribute="centerX" id="zL9-NI-Sbe"/>
+                            <constraint firstItem="GeT-N9-zpQ" firstAttribute="centerX" secondItem="7DM-lX-8kD" secondAttribute="centerX" id="jIX-zN-6gK"/>
+                            <constraint firstItem="N1N-gI-AIA" firstAttribute="top" secondItem="bXM-QU-ABa" secondAttribute="bottom" constant="22.5" id="nKD-iu-TDp"/>
+                            <constraint firstItem="4jn-dh-z3X" firstAttribute="top" secondItem="GeT-N9-zpQ" secondAttribute="bottom" constant="8" symbolic="YES" id="rTo-Q6-gFs"/>
                         </constraints>
                     </view>
                     <connections>
@@ -281,10 +269,10 @@
                         <outlet property="center_Btn" destination="nYM-Bf-sRZ" id="1cr-cu-yud"/>
                         <outlet property="middleLeft_Btn" destination="P6H-Dx-G16" id="8dM-Kl-m9V"/>
                         <outlet property="middleRight_Btn" destination="3vW-Wf-pGb" id="Cnr-w4-oHQ"/>
-                        <outlet property="move_Label" destination="trY-q3-k2y" id="ggy-Rw-xms"/>
                         <outlet property="topLeft_Btn" destination="IAg-dL-l4W" id="Zg3-yS-E2l"/>
                         <outlet property="topMiddle_Btn" destination="WX0-hX-d3M" id="1Ut-r0-OEC"/>
                         <outlet property="topRight_Btn" destination="gBP-II-HKP" id="n2a-UJ-I9b"/>
+                        <outlet property="turn_img" destination="N1N-gI-AIA" id="n2K-ph-s2M"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PO2-6o-IaB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -293,6 +281,10 @@
         </scene>
     </scenes>
     <resources>
+        <image name="TTT_Logo" width="412" height="142"/>
+        <image name="p1" width="448" height="142"/>
+        <image name="p1_Turn" width="562" height="142"/>
+        <image name="p2" width="454" height="142"/>
         <systemColor name="secondarySystemBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
