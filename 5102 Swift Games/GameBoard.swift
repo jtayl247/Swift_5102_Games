@@ -7,8 +7,26 @@
 
 import Foundation
 import UIKit
+import Firebase
+import FirebaseDatabase
 
-class GameBoard: UIViewController {
+
+//TODO: list
+//  TODO: Single player - Let user play against themselves
+//  TODO: Restrict user based on whose turn it is - Don't let same player place X/O twice in a row
+//  TODO: Make other play wait till move has occured?
+//  TODO: Better display to tell which player is which symbol / turn it is
+
+
+class GameBoard: UIViewController{
+    //database holds the reference to the FireBase DB
+    let database = Database.database().reference()
+    
+    var UserID: String?
+    var UserEmail: String?
+
+    var playerSymbol : String?
+    var sessionID : String?
     
     //Leaving as enum for now, can change to int or bool later if we want
     enum playerTurn{
@@ -19,16 +37,14 @@ class GameBoard: UIViewController {
     //Will start game as X for now, let player choose later?
     var firstMove = playerTurn.X
     var currentMove = playerTurn.X
+    
     var grid = [UIButton]()
     
-    //Will use strings to set symbols on grid for now, can use images later if we want
-    var x = "X"
-    var o = "O"
-    
+    //Images
     let X_img : UIImage? = UIImage(named: "X_neon.png")
     let O_img : UIImage? = UIImage(named: "O_neon.png")
     let X_turn_img : UIImage? = UIImage(named: "p1_Turn.png")
-    let O_Turn_img : UIImage? = UIImage(named: "p2_Turn.png")
+    let O_turn_img : UIImage? = UIImage(named: "p2_Turn.png")
     let blank_img : UIImage? = UIImage(named: "blank.png")
     
     //Initialize Buttons for Grid
@@ -44,14 +60,30 @@ class GameBoard: UIViewController {
     @IBOutlet weak var bottomMiddle_Btn: UIButton!
     @IBOutlet weak var bottomRight_Btn: UIButton!
     
+    //Image to tell who goes next
     @IBOutlet weak var turn_img: UIImageView!
     
+    @IBOutlet weak var opponentEmail: UITextField!
+    
+    //Tells game status
+    @IBOutlet weak var gameInfo_Label: UILabel!
+    
+    
+    
+    //When the view first loads, create the grid and began listening for game invite
     override func viewDidLoad() {
+        
         super.viewDidLoad()
+        self.isModalInPresentation = true
+        
+        gameRequest()
         initGrid()
+        
     }
     
+    //Create grid
     func initGrid(){
+        
         grid.append(topLeft_Btn)
         grid.append(topMiddle_Btn)
         grid.append(topRight_Btn)
@@ -62,12 +94,18 @@ class GameBoard: UIViewController {
         grid.append(bottomMiddle_Btn)
         grid.append(bottomRight_Btn)
         
+    }
+    
+    //Action for when button on grid is tapped
+    @IBAction func gridTap(_ sender: UIButton) {
+        
+        addMoveToGrid(sender)
+        checkWinner()
         
     }
     
-    //Action for when button on TTT grid is tapped
-    @IBAction func gridTap(_ sender: UIButton) {
-        addMoveToGrid(sender)
+    //Checks if either player won and displays winner if found
+    func checkWinner(){
         
         if checkGrid("X_neon"){
             resultMessage(title: "X wins!")
@@ -76,13 +114,15 @@ class GameBoard: UIViewController {
             resultMessage(title: "O wins!")
         }
         
-        
         if isGridFull(){
             resultMessage(title: "Tie!")
         }
+        
     }
     
+    //Checks each possible winning combination using whichever symbol is passed as param and returns true if a winner is found
     func checkGrid(_ symbol: String) -> Bool{
+        
         //check horizontal row victories
         if checkSymbol(topLeft_Btn, symbol) && checkSymbol(topMiddle_Btn, symbol) && checkSymbol(topRight_Btn, symbol){
             return true
@@ -113,78 +153,331 @@ class GameBoard: UIViewController {
             return true
         }
         
+        
         return false
+        
     }
     
+    //Returns whether the image of a button = the symbol passed as param
     func checkSymbol(_ button: UIButton, _ symbol: String) -> Bool{
-        //return button.title(for: .normal) == symbol
+        
         return button.currentImage == UIImage(named: symbol)
+        
     }
     
-    //Add a symbol to the grid depending on whose turn it is (placement occurs automatically)
+    //Add a symbol to the grid depending on whose turn it is (placement occurs automatically using sender)
     func addMoveToGrid(_ sender: UIButton){
+        
         //First check if button has no sybmol by checking it's title
         if (sender.title(for: .normal) == nil) || (sender.title(for: .normal) == ""){
-            //button is empty, check whose turn it is and add symbol based on result
-            if (currentMove == playerTurn.X){
-                //sender.setTitle(x, for: .normal)
+            //button is empty, check whose turn it is and add symbol based on result and then switch turns
+            
+            if (playerSymbol == "X"){
                 sender.setImage(X_img, for: .normal)
-                turn_img.image = O_Turn_img
+                turn_img.image = O_turn_img
                 currentMove = playerTurn.O
             }
-            else if (currentMove == playerTurn.O){
-                //sender.setTitle(o, for: .normal)
+            else if (playerSymbol == "O"){
                 sender.setImage(O_img, for: .normal)
-                turn_img.image = X_turn_img
+                turn_img.image = O_turn_img
                 currentMove = playerTurn.X
             }
+            
             sender.isEnabled = false
             
         }
         
+        //Check if user is playing someone else TODO: This doesn't do anything
+        if (sessionID != nil){
+            
+            //Tell FireBase which button was pressed
+            self.database.child("TicTacToe").child("OnlineSession").child(sessionID!).child("\(sender.accessibilityIdentifier ?? "")").setValue(formatEmail(email: UserEmail!))
+            
+        }
+
     }
     
     //Check if all slots on grid have been played
     func isGridFull() -> Bool{
+        
         for slot in grid{
             if slot.image(for: .normal) == nil || slot.image(for: .normal) == blank_img{
                 return false
             }
-            //if slot.title(for: .normal) == nil || slot.title(for: .normal) == ""{
-                //Slot has not been played, grid is not full
-            //    return false
-            //}
         }
+        
         return true
+        
     }
     
-    //Present message to player
+    //Present message to player with game winner info and play again option
     func resultMessage(title: String){
+        
         let message = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         message.addAction(UIAlertAction(title: "Play Again", style: .default, handler: { (_) in
             self.resetGrid()
         }))
         self.present(message, animated: true)
+        
     }
     
     //Reset all slots in grid to blank and reset first move
     func resetGrid(){
+       
         for slot in grid{
             slot.setImage(blank_img, for: UIControl.State.normal)
-            //slot.setTitle("", for: .normal)
             slot.isEnabled = true
         }
+        
+        //TODO: This doesn't mean anything at the moment, need to work on turns
         if (firstMove == playerTurn.X){
             firstMove = playerTurn.X
-            turn_img.image = O_Turn_img
+            turn_img.image = O_turn_img
             
         }
         else if (firstMove == playerTurn.O){
             firstMove = playerTurn.O
             turn_img.image = X_turn_img
         }
+        
         currentMove = firstMove
         turn_img.image = X_turn_img
+        
+        //Reset the FireBase values
+        self.database.child("TicTacToe").child("OnlineSession").child(sessionID!).removeValue()
+        
+    }
+    
+    //Listens for invite from other player. Fills opponent email text field with requesting player's email.
+    func gameRequest(){
+        
+        self.database.child("TicTacToe").child("Users").child(formatEmail(email: UserEmail!)).child("Request").observe(.value, with: {
+            (snapshot) in
+            
+            if let snapshot = snapshot.children.allObjects as? [DataSnapshot]{
+                
+                for snap in snapshot{
+                    
+                    if let playerRequest = snap.value as? String{
+                        
+                        self.opponentEmail.text = playerRequest
+                        self.database.child("TicTacToe").child("Users").child(self.formatEmail(email: self.UserEmail!)).child("Request").setValue(self.UserID)
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        })
+        
+    }
+    
+    //When invite button is tapped, initiate session between user and email of opponent and set symbols based on invite(X) vs accept(O)
+    @IBAction func Invite_Button_Tap(_ sender: Any) {
+        
+        self.database.child("TicTacToe").child("Users").child(formatEmail(email:(opponentEmail.text)!)).child("Request").childByAutoId().setValue(UserEmail!)
+        //If you invite someone, you become X
+        playerSymbol = "X"
+        createSession(sessionID: "\(formatEmail(email: UserEmail!)) \(formatEmail(email: opponentEmail.text!))")
+        
+    }
+    
+    //When the accept button is tapped, create a session with the opponent
+    @IBAction func Accept_Button_Tap(_ sender: Any) {
+        
+        self.database.child("TicTacToe").child("Users").child(formatEmail(email:(opponentEmail.text)!)).child("Request").childByAutoId().setValue(UserEmail!)
+        //If you accept an invite, you become O
+        playerSymbol = "O"
+        createSession(sessionID: "\(formatEmail(email: opponentEmail.text!)) \(formatEmail(email: UserEmail!))")
+        
+    }
+    
+    //This is where the game happens, this listens for an opponent's move and fills the board accordingly and checks for winners
+    func createSession(sessionID: String){
+        
+        gameInfo_Label.text = ("Game Started!")
+        self.sessionID = sessionID
+        self.database.child("TicTacToe").child("OnlineSession").child(sessionID).removeValue()
+        self.database.child("TicTacToe").child("OnlineSession").child(sessionID).observe(.value, with: {
+            
+            (snapshot) in
+            
+            if let snapshot = snapshot.children.allObjects as? [DataSnapshot]{
+                
+                
+                for snap in snapshot{
+                    
+                    if let playerEmail = snap.value as? String{
+                        
+                        let keyGridPlacement = snap.key
+                        if playerEmail == self.formatEmail(email: self.UserEmail!){
+                            
+                            //player's move
+                            print("My Move.............")
+                            self.placeMove(gridLocation: keyGridPlacement, playerSymbol: self.playerSymbol!)
+                            self.checkWinner()
+                            
+                        }
+                        
+                        else{
+                            
+                            //opponent's move
+                            print("Opponent's move............")
+                            var opponentSymbol: String?
+                            
+                            if (self.playerSymbol == "X"){
+                                
+                                opponentSymbol = "O"
+                                
+                            }
+                            
+                            else{
+                                
+                                opponentSymbol = "X"
+                            
+                            }
+                            self.placeMove(gridLocation: keyGridPlacement, playerSymbol: opponentSymbol!)
+                            self.checkWinner()
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        })
+        
+    }
+    
+    
+    //Based on the player's symbol, this will set the grid image for the slot selected
+    func placeMove(gridLocation: String, playerSymbol: String){
+        
+        switch gridLocation{
+            
+        case "top_left":
+            
+            if (playerSymbol == "X"){
+                //place the x image on that button
+                topLeft_Btn.setImage(X_img, for: .normal)
+            }
+            else{
+                //place an O image
+                topLeft_Btn.setImage(O_img, for: .normal)
+
+            }
+            
+        case "top_middle":
+            
+            if (playerSymbol == "X"){
+                //place the x image on that button
+                topMiddle_Btn.setImage(X_img, for: .normal)
+            }
+            else{
+                //place an O image
+                topMiddle_Btn.setImage(O_img, for: .normal)
+
+            }
+            
+        case "top_right":
+            
+            if (playerSymbol == "X"){
+                //place the x image on that button
+                topRight_Btn.setImage(X_img, for: .normal)
+            }
+            else{
+                //place an O image
+                topRight_Btn.setImage(O_img, for: .normal)
+
+            }
+            
+        case "middle_left":
+            
+            if (playerSymbol == "X"){
+                //place the x image on that button
+                middleLeft_Btn.setImage(X_img, for: .normal)
+            }
+            else{
+                //place an O image
+                middleLeft_Btn.setImage(O_img, for: .normal)
+
+            }
+            
+        case "center":
+            
+            if (playerSymbol == "X"){
+                //place the x image on that button
+                center_Btn.setImage(X_img, for: .normal)
+            }
+            else{
+                //place an O image
+                center_Btn.setImage(O_img, for: .normal)
+            }
+            
+        case "middle_right":
+            
+            if (playerSymbol == "X"){
+                //place the x image on that button
+                middleRight_Btn.setImage(X_img, for: .normal)
+            }
+            else{
+                //place an O image
+                middleRight_Btn.setImage(O_img, for: .normal)
+
+            }
+            
+        case "bottom_left":
+            
+            if (playerSymbol == "X"){
+                //place the x image on that button
+                bottomLeft_Btn.setImage(X_img, for: .normal)
+            }
+            else{
+                //place an O image
+                bottomLeft_Btn.setImage(O_img, for: .normal)
+
+            }
+            
+        case "bottom_middle":
+            
+            if (playerSymbol == "X"){
+                //place the x image on that button
+                bottomMiddle_Btn.setImage(X_img, for: .normal)
+            }
+            else{
+                //place an O image
+                bottomMiddle_Btn.setImage(O_img, for: .normal)
+
+            }
+            
+        case "bottom_right":
+            
+            if (playerSymbol == "X"){
+                //place the x image on that button
+                bottomRight_Btn.setImage(X_img, for: .normal)
+            }
+            else{
+                //place an O image
+                bottomRight_Btn.setImage(O_img, for: .normal)
+            }
+            
+        default:
+            
+            print("Weird...")
+            
+        }
+   
+    }
+    
+    //This will remove everything after the @ symbol in an email
+    func formatEmail(email:String) -> String{
+        
+        let emailParts = email.split(separator: "@")
+        return String(emailParts[0])
+        
     }
     
 }
