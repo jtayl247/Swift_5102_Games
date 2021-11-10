@@ -13,12 +13,11 @@ import FirebaseDatabase
 
 //TODO: list
 //  TODO: Single player - Let user play against themselves
-//  TODO: Restrict user based on whose turn it is - Don't let same player place X/O twice in a row
 //  TODO: Make other play wait till move has occured?
 //  TODO: Better display to tell which player is which symbol / turn it is
 
 
-class GameBoard: UIViewController{
+class GameBoard: UIViewController, UITextFieldDelegate{
     //database holds the reference to the FireBase DB
     let database = Database.database().reference()
     
@@ -27,6 +26,8 @@ class GameBoard: UIViewController{
 
     var playerSymbol : String?
     var sessionID : String?
+    
+    var turnCount: Int? = 0 //Use this to determine whose move it is
     
     //Leaving as enum for now, can change to int or bool later if we want
     enum playerTurn{
@@ -75,6 +76,7 @@ class GameBoard: UIViewController{
         
         super.viewDidLoad()
         self.isModalInPresentation = true
+        self.opponentEmail.delegate = self
         
         gameRequest()
         initGrid()
@@ -168,33 +170,65 @@ class GameBoard: UIViewController{
     //Add a symbol to the grid depending on whose turn it is (placement occurs automatically using sender)
     func addMoveToGrid(_ sender: UIButton){
         
-        //First check if button has no sybmol by checking it's title
-        if (sender.title(for: .normal) == nil) || (sender.title(for: .normal) == ""){
-            //button is empty, check whose turn it is and add symbol based on result and then switch turns
-            
-            if (playerSymbol == "X"){
-                sender.setImage(X_img, for: .normal)
-                turn_img.image = O_turn_img
-                currentMove = playerTurn.O
+        if isTurnAllowed(){
+            //First check if button has no sybmol by checking it's title
+            if (sender.title(for: .normal) == nil) || (sender.title(for: .normal) == ""){
+                //button is empty, check whose turn it is and add symbol based on result and then switch turns
+                
+                if (playerSymbol == "X"){
+                    sender.setImage(X_img, for: .normal)
+                    turn_img.image = O_turn_img
+                    currentMove = playerTurn.O
+                }
+                else if (playerSymbol == "O"){
+                    sender.setImage(O_img, for: .normal)
+                    turn_img.image = O_turn_img
+                    currentMove = playerTurn.X
+                }
+                
+                sender.isEnabled = false
+                
             }
-            else if (playerSymbol == "O"){
-                sender.setImage(O_img, for: .normal)
-                turn_img.image = O_turn_img
-                currentMove = playerTurn.X
+            
+            //Check if user is playing someone else TODO: This doesn't do anything
+            if (sessionID != nil){
+                
+                //Tell FireBase which button was pressed
+                self.database.child("TicTacToe").child("OnlineSession").child(sessionID!).child("\(sender.accessibilityIdentifier ?? "")").setValue(formatEmail(email: UserEmail!))
+                
             }
-            
-            sender.isEnabled = false
-            
+        }
+        else{
+            showMessage(title: "Wait!", message: "It's not your turn yet. Wait for your opponent's move...")
+            return
         }
         
-        //Check if user is playing someone else TODO: This doesn't do anything
-        if (sessionID != nil){
-            
-            //Tell FireBase which button was pressed
-            self.database.child("TicTacToe").child("OnlineSession").child(sessionID!).child("\(sender.accessibilityIdentifier ?? "")").setValue(formatEmail(email: UserEmail!))
-            
-        }
+        
 
+    }
+    
+    func isTurnAllowed() -> Bool{
+        if (playerSymbol == "X"){
+            //count needs to be 1, 3, 5, 7, 9
+            if (turnCount! % 2 == 0){
+                //Player X turn
+                return true
+            }
+            else{
+                return false
+            }
+        }
+        if (playerSymbol == "O"){
+
+            if (turnCount! % 2 == 0){
+                //Player O turn
+                return false
+            }
+            else{
+                return true
+            }
+        }
+        return true
     }
     
     //Check if all slots on grid have been played
@@ -221,6 +255,14 @@ class GameBoard: UIViewController{
         
     }
     
+    func showMessage(title: String, message: String){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     //Reset all slots in grid to blank and reset first move
     func resetGrid(){
        
@@ -245,6 +287,8 @@ class GameBoard: UIViewController{
         
         //Reset the FireBase values
         self.database.child("TicTacToe").child("OnlineSession").child(sessionID!).removeValue()
+        
+        turnCount = 0
         
     }
     
@@ -297,15 +341,21 @@ class GameBoard: UIViewController{
     func createSession(sessionID: String){
         
         gameInfo_Label.text = ("Game Started!")
+        
+        if (playerSymbol == "X"){
+            gameInfo_Label.text = "You are X!"
+        }
+        else{
+            gameInfo_Label.text = "You are O!"
+        }
+        
         self.sessionID = sessionID
         self.database.child("TicTacToe").child("OnlineSession").child(sessionID).removeValue()
         self.database.child("TicTacToe").child("OnlineSession").child(sessionID).observe(.value, with: {
             
             (snapshot) in
-            
             if let snapshot = snapshot.children.allObjects as? [DataSnapshot]{
-                
-                
+                self.turnCount = 0
                 for snap in snapshot{
                     
                     if let playerEmail = snap.value as? String{
@@ -314,7 +364,6 @@ class GameBoard: UIViewController{
                         if playerEmail == self.formatEmail(email: self.UserEmail!){
                             
                             //player's move
-                            print("My Move.............")
                             self.placeMove(gridLocation: keyGridPlacement, playerSymbol: self.playerSymbol!)
                             self.checkWinner()
                             
@@ -323,7 +372,6 @@ class GameBoard: UIViewController{
                         else{
                             
                             //opponent's move
-                            print("Opponent's move............")
                             var opponentSymbol: String?
                             
                             if (self.playerSymbol == "X"){
@@ -343,13 +391,28 @@ class GameBoard: UIViewController{
                         }
                         
                     }
+                    self.turnCount! += 1 //Determines whose turn it is
                     
+                }
+                //count needs to be 1, 3, 5, 7, 9
+                if (self.turnCount! % 2 == 0){
+                    //Player X turn
+                    self.turn_img.image = self.X_turn_img
+                }
+                else{
+                    self.turn_img.image = self.O_turn_img
                 }
                 
             }
             
         })
         
+    }
+    
+    //Function to dismiss keyboard
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
     
     

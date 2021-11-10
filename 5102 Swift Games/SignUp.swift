@@ -15,7 +15,7 @@ import FirebaseAuth
 import FirebaseDatabase
 
 
-class SignUp: UIViewController{
+class SignUp: UIViewController, UITextFieldDelegate{
     //For now, just take user to main tic-tac-toe screen after button press
 
     @IBOutlet weak var email: UITextField!
@@ -29,6 +29,8 @@ class SignUp: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.email.delegate = self
+        self.password.delegate = self
         
         if let user = Auth.auth().currentUser{
             self.UserID = user.uid
@@ -63,8 +65,12 @@ class SignUp: UIViewController{
             //Present main tic-tac-toe view
             self.performSegue(withIdentifier: "showGame", sender: nil)
             
-            
         }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

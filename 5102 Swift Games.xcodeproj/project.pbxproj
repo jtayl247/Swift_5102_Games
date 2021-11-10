@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		030787DF273BFDEC00982CC7 /* AppIcons in Resources */ = {isa = PBXBuildFile; fileRef = 030787DE273BFDEC00982CC7 /* AppIcons */; };
 		0363B70F271E40410066DE0B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0363B70E271E40410066DE0B /* AppDelegate.swift */; };
 		0363B711271E40410066DE0B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0363B710271E40410066DE0B /* SceneDelegate.swift */; };
 		0363B713271E40410066DE0B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0363B712271E40410066DE0B /* ViewController.swift */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		030787DE273BFDEC00982CC7 /* AppIcons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppIcons; sourceTree = "<group>"; };
 		0363B70B271E40410066DE0B /* 5102 Swift Games.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "5102 Swift Games.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0363B70E271E40410066DE0B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0363B710271E40410066DE0B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 				47692820271E4DC200E823B5 /* User.swift */,
 				0363B714271E40410066DE0B /* Main.storyboard */,
 				0363B717271E40430066DE0B /* Assets.xcassets */,
+				030787DE273BFDEC00982CC7 /* AppIcons */,
 				0363B719271E40430066DE0B /* LaunchScreen.storyboard */,
 				0363B71C271E40430066DE0B /* Info.plist */,
 				0363B726271EFA6C0066DE0B /* GoogleService-Info.plist */,
@@ -164,6 +167,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0363B71B271E40430066DE0B /* LaunchScreen.storyboard in Resources */,
+				030787DF273BFDEC00982CC7 /* AppIcons in Resources */,
 				0363B727271EFA6D0066DE0B /* GoogleService-Info.plist in Resources */,
 				0363B718271E40430066DE0B /* Assets.xcassets in Resources */,
 				0363B716271E40410066DE0B /* Main.storyboard in Resources */,
