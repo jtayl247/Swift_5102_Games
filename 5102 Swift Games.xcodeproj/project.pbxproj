@@ -10,14 +10,12 @@
 		030787DF273BFDEC00982CC7 /* AppIcons in Resources */ = {isa = PBXBuildFile; fileRef = 030787DE273BFDEC00982CC7 /* AppIcons */; };
 		0363B70F271E40410066DE0B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0363B70E271E40410066DE0B /* AppDelegate.swift */; };
 		0363B711271E40410066DE0B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0363B710271E40410066DE0B /* SceneDelegate.swift */; };
-		0363B713271E40410066DE0B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0363B712271E40410066DE0B /* ViewController.swift */; };
 		0363B716271E40410066DE0B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0363B714271E40410066DE0B /* Main.storyboard */; };
 		0363B718271E40430066DE0B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0363B717271E40430066DE0B /* Assets.xcassets */; };
 		0363B71B271E40430066DE0B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0363B719271E40430066DE0B /* LaunchScreen.storyboard */; };
 		0363B727271EFA6D0066DE0B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0363B726271EFA6C0066DE0B /* GoogleService-Info.plist */; };
 		0363B729271F021F0066DE0B /* SignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0363B728271F021E0066DE0B /* SignUp.swift */; };
 		4769281F271E4DAE00E823B5 /* GameBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4769281E271E4DAE00E823B5 /* GameBoard.swift */; };
-		47692821271E4DC200E823B5 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47692820271E4DC200E823B5 /* User.swift */; };
 		CAA2293A7A5A87516D4F25FA /* Pods_5102_Swift_Games.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 293F02362144663DE2B0F483 /* Pods_5102_Swift_Games.framework */; };
 /* End PBXBuildFile section */
 
@@ -26,7 +24,6 @@
 		0363B70B271E40410066DE0B /* 5102 Swift Games.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "5102 Swift Games.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0363B70E271E40410066DE0B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0363B710271E40410066DE0B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		0363B712271E40410066DE0B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		0363B715271E40410066DE0B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0363B717271E40430066DE0B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0363B71A271E40430066DE0B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -36,7 +33,6 @@
 		235406A3A1138A09EDBCA880 /* Pods-5102 Swift Games.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-5102 Swift Games.debug.xcconfig"; path = "Target Support Files/Pods-5102 Swift Games/Pods-5102 Swift Games.debug.xcconfig"; sourceTree = "<group>"; };
 		293F02362144663DE2B0F483 /* Pods_5102_Swift_Games.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_5102_Swift_Games.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4769281E271E4DAE00E823B5 /* GameBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoard.swift; sourceTree = "<group>"; };
-		47692820271E4DC200E823B5 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		F9BBD3D41D5E5EC9EDA728E2 /* Pods-5102 Swift Games.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-5102 Swift Games.release.xcconfig"; path = "Target Support Files/Pods-5102 Swift Games/Pods-5102 Swift Games.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,9 +71,7 @@
 			children = (
 				0363B70E271E40410066DE0B /* AppDelegate.swift */,
 				0363B710271E40410066DE0B /* SceneDelegate.swift */,
-				0363B712271E40410066DE0B /* ViewController.swift */,
 				4769281E271E4DAE00E823B5 /* GameBoard.swift */,
-				47692820271E4DC200E823B5 /* User.swift */,
 				0363B714271E40410066DE0B /* Main.storyboard */,
 				0363B717271E40430066DE0B /* Assets.xcassets */,
 				030787DE273BFDEC00982CC7 /* AppIcons */,
@@ -225,9 +219,7 @@
 			files = (
 				4769281F271E4DAE00E823B5 /* GameBoard.swift in Sources */,
 				0363B729271F021F0066DE0B /* SignUp.swift in Sources */,
-				0363B713271E40410066DE0B /* ViewController.swift in Sources */,
 				0363B70F271E40410066DE0B /* AppDelegate.swift in Sources */,
-				47692821271E4DC200E823B5 /* User.swift in Sources */,
 				0363B711271E40410066DE0B /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

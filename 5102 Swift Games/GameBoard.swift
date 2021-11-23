@@ -3,21 +3,22 @@
 //  5102 Swift Games
 //
 //  Created by Carlos Del Carpio on 10/18/21.
-//
 
 import Foundation
 import UIKit
 import Firebase
 import FirebaseDatabase
 
-
-//TODO: list
-//  TODO: Single player - Let user play against themselves
-//  TODO: Make other play wait till move has occured?
-//  TODO: Better display to tell which player is which symbol / turn it is
-
-
 class GameBoard: UIViewController, UITextFieldDelegate{
+    
+    //To determine whose move it is
+    enum playerTurn{
+        
+        case X
+        case O
+        
+    }
+    
     //database holds the reference to the FireBase DB
     let database = Database.database().reference()
     
@@ -28,12 +29,6 @@ class GameBoard: UIViewController, UITextFieldDelegate{
     var sessionID : String?
     
     var turnCount: Int? = 0 //Use this to determine whose move it is
-    
-    //Leaving as enum for now, can change to int or bool later if we want
-    enum playerTurn{
-        case X
-        case O
-    }
     
     //Will start game as X for now, let player choose later?
     var firstMove = playerTurn.X
@@ -64,12 +59,11 @@ class GameBoard: UIViewController, UITextFieldDelegate{
     //Image to tell who goes next
     @IBOutlet weak var turn_img: UIImageView!
     
+    //Text field where user can invite or see who invited them to game
     @IBOutlet weak var opponentEmail: UITextField!
     
     //Tells game status
     @IBOutlet weak var gameInfo_Label: UILabel!
-    
-    
     
     //When the view first loads, create the grid and began listening for game invite
     override func viewDidLoad() {
@@ -98,7 +92,7 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         
     }
     
-    //Action for when button on grid is tapped
+    //When button on grid is tapped, add the move to the grid and check for winner
     @IBAction func gridTap(_ sender: UIButton) {
         
         addMoveToGrid(sender)
@@ -106,21 +100,30 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         
     }
     
+    
     //Checks if either player won and displays winner if found
     func checkWinner(){
         
         if checkGrid("X_neon"){
+            
             resultMessage(title: "X wins!")
+            
         }
+        
         else if checkGrid("O_neon"){
+            
             resultMessage(title: "O wins!")
+            
         }
         
         if isGridFull(){
+            
             resultMessage(title: "Tie!")
+            
         }
         
     }
+    
     
     //Checks each possible winning combination using whichever symbol is passed as param and returns true if a winner is found
     func checkGrid(_ symbol: String) -> Bool{
@@ -171,73 +174,110 @@ class GameBoard: UIViewController, UITextFieldDelegate{
     func addMoveToGrid(_ sender: UIButton){
         
         if isTurnAllowed(){
-            //First check if button has no sybmol by checking it's title
+            
+            //Check if grid location already has a symbol
+            if (sender.currentImage == X_img || sender.currentImage == O_img){
+                
+                showMessage(title: "Invalid Move", message: "Cannot place move here. Please select a different location.")
+                return
+                
+            }
+            
+            //Check if button has no symbol by checking it's title
             if (sender.title(for: .normal) == nil) || (sender.title(for: .normal) == ""){
                 //button is empty, check whose turn it is and add symbol based on result and then switch turns
                 
                 if (playerSymbol == "X"){
+                    
                     sender.setImage(X_img, for: .normal)
                     turn_img.image = O_turn_img
                     currentMove = playerTurn.O
+                    
                 }
+                
                 else if (playerSymbol == "O"){
+                    
                     sender.setImage(O_img, for: .normal)
                     turn_img.image = O_turn_img
                     currentMove = playerTurn.X
+                    
                 }
                 
+                //Disable the button selected
                 sender.isEnabled = false
                 
             }
             
-            //Check if user is playing someone else TODO: This doesn't do anything
+            //Check if user is playing someone else
             if (sessionID != nil){
                 
                 //Tell FireBase which button was pressed
                 self.database.child("TicTacToe").child("OnlineSession").child(sessionID!).child("\(sender.accessibilityIdentifier ?? "")").setValue(formatEmail(email: UserEmail!))
                 
             }
+            
         }
+        
         else{
+            
             showMessage(title: "Wait!", message: "It's not your turn yet. Wait for your opponent's move...")
             return
+            
         }
         
-        
-
     }
     
+    //Check if turn is allowed based on how many turns have occured
     func isTurnAllowed() -> Bool{
+        
         if (playerSymbol == "X"){
+            
             //count needs to be 1, 3, 5, 7, 9
             if (turnCount! % 2 == 0){
+                
                 //Player X turn
                 return true
             }
+            
             else{
+                
                 return false
+                
             }
+            
         }
+        
         if (playerSymbol == "O"){
 
             if (turnCount! % 2 == 0){
+                
                 //Player O turn
                 return false
+                
             }
+            
             else{
+                
                 return true
+                
             }
+            
         }
+        
         return true
+        
     }
     
     //Check if all slots on grid have been played
     func isGridFull() -> Bool{
         
         for slot in grid{
+            
             if slot.image(for: .normal) == nil || slot.image(for: .normal) == blank_img{
+                
                 return false
             }
+            
         }
         
         return true
@@ -255,31 +295,38 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         
     }
     
+    //Can be used to show player a message
     func showMessage(title: String, message: String){
+        
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
 
         }))
         self.present(alert, animated: true, completion: nil)
+        
     }
     
     //Reset all slots in grid to blank and reset first move
     func resetGrid(){
        
         for slot in grid{
+            
             slot.setImage(blank_img, for: UIControl.State.normal)
             slot.isEnabled = true
+            
         }
         
-        //TODO: This doesn't mean anything at the moment, need to work on turns
         if (firstMove == playerTurn.X){
+            
             firstMove = playerTurn.X
             turn_img.image = O_turn_img
             
         }
         else if (firstMove == playerTurn.O){
+            
             firstMove = playerTurn.O
             turn_img.image = X_turn_img
+            
         }
         
         currentMove = firstMove
@@ -343,10 +390,15 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         gameInfo_Label.text = ("Game Started!")
         
         if (playerSymbol == "X"){
+            
             gameInfo_Label.text = "You are X!"
+            
         }
+        
         else{
+            
             gameInfo_Label.text = "You are O!"
+            
         }
         
         self.sessionID = sessionID
@@ -355,6 +407,7 @@ class GameBoard: UIViewController, UITextFieldDelegate{
             
             (snapshot) in
             if let snapshot = snapshot.children.allObjects as? [DataSnapshot]{
+                
                 self.turnCount = 0
                 for snap in snapshot{
                     
@@ -396,11 +449,16 @@ class GameBoard: UIViewController, UITextFieldDelegate{
                 }
                 //count needs to be 1, 3, 5, 7, 9
                 if (self.turnCount! % 2 == 0){
+                    
                     //Player X turn
                     self.turn_img.image = self.X_turn_img
+                    
                 }
+                
                 else{
+                    
                     self.turn_img.image = self.O_turn_img
+                    
                 }
                 
             }
@@ -409,10 +467,13 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         
     }
     
+    
     //Function to dismiss keyboard
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
         textField.resignFirstResponder()
         return true
+        
     }
     
     
@@ -424,10 +485,14 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         case "top_left":
             
             if (playerSymbol == "X"){
+                
                 //place the x image on that button
                 topLeft_Btn.setImage(X_img, for: .normal)
+                
             }
+            
             else{
+                
                 //place an O image
                 topLeft_Btn.setImage(O_img, for: .normal)
 
@@ -436,10 +501,13 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         case "top_middle":
             
             if (playerSymbol == "X"){
+                
                 //place the x image on that button
                 topMiddle_Btn.setImage(X_img, for: .normal)
             }
+            
             else{
+                
                 //place an O image
                 topMiddle_Btn.setImage(O_img, for: .normal)
 
@@ -448,10 +516,14 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         case "top_right":
             
             if (playerSymbol == "X"){
+                
                 //place the x image on that button
                 topRight_Btn.setImage(X_img, for: .normal)
+                
             }
+            
             else{
+                
                 //place an O image
                 topRight_Btn.setImage(O_img, for: .normal)
 
@@ -460,10 +532,14 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         case "middle_left":
             
             if (playerSymbol == "X"){
+                
                 //place the x image on that button
                 middleLeft_Btn.setImage(X_img, for: .normal)
+                
             }
+            
             else{
+                
                 //place an O image
                 middleLeft_Btn.setImage(O_img, for: .normal)
 
@@ -472,21 +548,30 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         case "center":
             
             if (playerSymbol == "X"){
+                
                 //place the x image on that button
                 center_Btn.setImage(X_img, for: .normal)
+                
             }
+            
             else{
+                
                 //place an O image
                 center_Btn.setImage(O_img, for: .normal)
+                
             }
             
         case "middle_right":
             
             if (playerSymbol == "X"){
+                
                 //place the x image on that button
                 middleRight_Btn.setImage(X_img, for: .normal)
+                
             }
+            
             else{
+                
                 //place an O image
                 middleRight_Btn.setImage(O_img, for: .normal)
 
@@ -495,10 +580,14 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         case "bottom_left":
             
             if (playerSymbol == "X"){
+                
                 //place the x image on that button
                 bottomLeft_Btn.setImage(X_img, for: .normal)
+                
             }
+            
             else{
+                
                 //place an O image
                 bottomLeft_Btn.setImage(O_img, for: .normal)
 
@@ -507,10 +596,13 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         case "bottom_middle":
             
             if (playerSymbol == "X"){
+                
                 //place the x image on that button
                 bottomMiddle_Btn.setImage(X_img, for: .normal)
+                
             }
             else{
+                
                 //place an O image
                 bottomMiddle_Btn.setImage(O_img, for: .normal)
 
@@ -519,12 +611,17 @@ class GameBoard: UIViewController, UITextFieldDelegate{
         case "bottom_right":
             
             if (playerSymbol == "X"){
+                
                 //place the x image on that button
                 bottomRight_Btn.setImage(X_img, for: .normal)
+                
             }
+            
             else{
+                
                 //place an O image
                 bottomRight_Btn.setImage(O_img, for: .normal)
+                
             }
             
         default:
